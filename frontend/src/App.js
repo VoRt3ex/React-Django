@@ -15,7 +15,6 @@ import { CameraFeed } from './components/camera-feed';
 import Speech from 'react-speech';
 /* eslint no-undef: 0 */ // --> OFF
 class App extends Component {
-// ====================================================
     /**
      * Processes available devices and identifies one by the label
      * @memberof CameraFeed
@@ -256,4 +255,3 @@ class App extends Component {
 const rootElement = document.getElementById('root');
 ReactDOM.render(<App />, rootElement);
 export default App;
-
