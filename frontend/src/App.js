@@ -9,63 +9,12 @@ import Container from '@material-ui/core/Container';
 
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { CameraFeed } from './components/camera-feed';
 
 // React Speech: https://www.npmjs.com/package/react-speech
 import Speech from 'react-speech';
+
 /* eslint no-undef: 0 */ // --> OFF
 class App extends Component {
-    /**
-     * Processes available devices and identifies one by the label
-     * @memberof CameraFeed
-     * @instance
-     */
-    processDevices(devices) {
-        devices.forEach(device => {
-            console.log(device.label);
-            this.setDevice(device);
-        });
-    }
-
-    /**
-     * Sets the active device and starts playing the feed
-     * @memberof CameraFeed
-     * @instance
-     */
-    async setDevice(device) {
-        const { deviceId } = device;
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { deviceId } });
-        this.videoPlayer.srcObject = stream;
-        this.videoPlayer.play();
-    }
-
-    /**
-     * On mount, grab the users connected devices and process them
-     * @memberof CameraFeed
-     * @instance
-     * @override
-     */
-    async componentDidMount() {
-        const cameras = await navigator.mediaDevices.enumerateDevices();
-        this.processDevices(cameras);
-    }
-
-    /**
-     * Handles taking a still image from the video feed on the camera
-     * @memberof CameraFeed
-     * @instance
-     */
-
-    // takePhoto = () => {
-    //     // const { sendFile } = this.props;
-    //     const context = this.canvas.getContext('2d');
-    //     context.drawImage(this.videoPlayer, 0, 0, 680, 360);
-    //     // this.canvas.toBlob(sendFile);
-
-    //     console.log(this.canvas.toDataURL());
-    // };
-    
-    // ==========================================================================
 
   state = {
     image: '',
@@ -75,16 +24,6 @@ class App extends Component {
     imgfromcanvas:""
   };
 
-  takePhoto = () => {
-        // const { sendFile } = this.props;
-        const context = this.canvas.getContext('2d');
-        context.drawImage(this.videoPlayer, 0, 0, 680, 360);
-        // this.canvas.toBlob(sendFile);
-        this.setState({image:this.canvas.toDataURL()});
-        // alert(this.state.image);
-        console.log(this.canvas.toDataURL());
-        this.setState({imgfromcanvas:this.canvas.toDataURL()});
-    };
 
   requestDataOfImage() {
     var id_m=document.getElementById("processMessage");
@@ -97,14 +36,14 @@ class App extends Component {
     axios.get(`http://127.0.0.1:8000/Date_From_Image/`)
       .then(res => {
         console.log(res.data.imageText);
-        this.setState({imgText:res.data.imageText}); 
+        this.setState({imgText:res.data.imageText});
+
     
         const data_img = res.data;
         this.setState({ data_img });
         id_processm.setAttribute('style',"border:2px; border-style:solid; border-color:#FF0000; padding: 1em;")
         id_m.textContent="----Here is the Text From Image----";
         id_processm.textContent=this.state.data_img.imageText;
-        id_dateMess.textContent="---Date From Data----"
         id_dateInfo.setAttribute('style',"border:2px; border-style:solid; border-color:#FF0000; padding: 1em;")
         id_dateInfo.textContent=this.state.data_img.dateInfo;
 
@@ -177,6 +116,7 @@ class App extends Component {
         }
         var id_processm=document.getElementById("dataFromImage");
         id_processm.textContent=" ";
+
         var id_dateInfo=document.getElementById("dateInfo");
         id_dateInfo.textContent=" ";
 
@@ -189,65 +129,60 @@ class App extends Component {
 
     return (
       <div className="App">
-        <Container id="image_in"fixed>
-          <h1>Optical Character Recognization</h1>
-          <h2>======================</h2>
-          <div id="Upload_o=image">
-           <p>Select an Image to Upload</p>
-           <p>
-              <input accept="image/*"  id="contained-button-file" style={{ display: "none" }}  type="file" onChange={(event)=>this.handleImageChange(event)} required/>
-              <label htmlFor="contained-button-file">
-               <Button variant="contained" color="primary" component="span" >
-                   Upload Image
-               </Button>
-               <p id="u_image_name"></p>
-              </label>
-          </p>
-          <Button  variant="contained" color="primary" onClick={(event) => this.handleSubmit(event)}>Sumbit</Button>
+        <div class="login-block id= image_in">
+          <div class="container Upload_o=image conta">
+            <div class="row">
+              <div class="col-md-4 login-sec">
+                <h2 class="text-center">Third Eye</h2>
+                <div class="login-form">
+                  <div class="form-group">
+                    <p id="u_image_name"></p>
+                    <textarea
+                      type="text"
+                      class="form-control"
+                      placeholder="Upload Image To See Text"
+                      rows="5"
+                      id="dataFromImage"
+                    ></textarea>
+                  </div>
+                  <label class="form-label" for="customFile">
+                    <input
+                      style={{ overflow: "hidden" }}
+                      accept="image/*"
+                      id="contained-button-file"
+                      type="file"
+                      class="form-control"
+                      id="customFile"
+                      onChange={(event) => this.handleImageChange(event)}
+                    />
+                  </label>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={(event) => this.handleSubmit(event)}
+                  >
+                    Sumbit
+                  </Button>
+                  <br></br>
+                  <Speech text={this.state.imgText} />
+                </div>
+                <div class="copy-text" id="processMessage">
+                  <i class="fa fa-heart"></i>
+                </div>
+                <div id="postMessage"></div>
+              </div>
+              <div id="dataFromImage"></div>
+              <div class="col-md-8 banner-sec" id="uploadedImage">
+                <div class="carousel-inner" role="listbox">
+                  <div id="processMessage"></div>
+                  <div id="dateInfo" hidden></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p></p>
-          <div id='postMessage'></div>
-          <p></p>
-         <div id="uploadedImage"></div>
-          <h2>======================</h2> 
-        </Container>
-       <Container id="image_out" fixed>
-        <div id="processMessage"></div>
-        <p></p>
-
-        {/* value={value} onChange={(event) => setValue(event.target.value)}  */}
-        <Speech text={this.state.imgText} />
-        <div id="dataFromImage"></div>
-        {/* <button onClick={() => Speech(id="dataFromImage"={value})}>Speak</button> */}
-        {/* <Speech text==id="dataFromImage" /> */}
-
-        <div id="dateMessage"></div>
-        <div id="dateInfo"></div>
-  
-       </Container>
-
-       <div className="c-camera-feed">
-          <div className="c-camera-feed__viewer">
-              <video ref={ref => (this.videoPlayer = ref)} width="680" heigh="360" />
-          </div>
-          <button onClick={this.takePhoto}>Take photo!</button>
-          <div className="c-camera-feed__stage">
-              <canvas width="680" height="360" ref={ref => (this.canvas = ref)} />
-          </div>
-          <img src={this.state.imgfromcanvas} alt="asd" />
+        </div>
       </div>
-      </div>
-      
     );
-    // function Feed() {
-    // return (
-    //     <div className="Feed">
-    //         <h1>Image capture test</h1>
-    //         <p>Capture image from USB webcamera and upload to form</p>
-    //         <CameraFeed/>
-    //     </div>
-    // );
-    // }
   }
 }
 

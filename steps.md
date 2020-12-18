@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 1. Install tesseract using windows installer available at: https://github.com/UB-Mannheim/tesseract/wiki
 
 2. Note the tesseract path from the installation.
@@ -16,3 +9,6 @@
 
 after importing pyresseract add in manin_processors.py
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+
+
+https://images.pexels.com/photos/872957/pexels-photo-872957.jpeg
